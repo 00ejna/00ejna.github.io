@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>system message</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background-color: #0a0a0a;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.015),
+        rgba(255,255,255,0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.01),
+        rgba(255,255,255,0.01) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Courier New", Courier, monospace;
+  }
+
+  .popup {
+    width: 380px;
+    background-color: #121212;
+    border: 1px solid #2a2a2a;
+    box-shadow:
+      0 0 0 1px #050505,
+      0 6px 18px rgba(0,0,0,0.9);
+    position: relative;
+  }
+
+  .popup::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='1' height='1' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .titlebar {
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #8f8f8f;
+    background-color: #161616;
+    border-bottom: 1px solid #2a2a2a;
+    letter-spacing: 0.3px;
+  }
+
+  .content {
+    padding: 16px;
+    font-size: 13px;
+    color: #b8b8b8;
+    line-height: 1.5;
+  }
+
+  .content p {
+    margin: 0 0 12px 0;
+  }
+
+  .actions {
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 3px 14px;
+    font-size: 12px;
+    color: #b0b0b0;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    cursor: default;
+  }
+
+  .btn:active {
+    background-color: #141414;
+  }
+
+  /* subtle dead pixel */
+  .dead-pixel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: #ff0000;
+    opacity: 0.4;
+    top: 73%;
+    left: 61%;
+  }
+</style>
+</head>
+
+<body>
+  <div class="popup">
+    <div class="titlebar">
+      system message
+    </div>
+
+    <div class="content">
+      <p>
+        An internal process was interrupted.
+      </p>
+      <p>
+        The current state cannot be verified.
+      </p>
+      <p>
+        Further action is not recommended.
+      </p>
+    </div>
+
+    <div class="actions">
+      <div class="btn">OK</div>
+    </div>
+
+    <div class="dead-pixel"></div>
+  </div>
+
+  <!-- buffer not cleared -->
+</body>
+</html>
