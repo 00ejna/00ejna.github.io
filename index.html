@@ -6,108 +6,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    font-family: "Courier New", Courier, monospace;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(80,80,90,0.18), transparent 60%),
-      radial-gradient(circle at 80% 70%, rgba(40,60,70,0.18), transparent 55%),
-      linear-gradient(180deg, #0a0a0a, #050505);
-  }
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Courier New", Courier, monospace;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(80,80,90,0.18), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(40,60,70,0.18), transparent 55%),
+    linear-gradient(180deg, #0a0a0a, #050505);
+}
 
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        rgba(255,255,255,0.015),
-        rgba(255,255,255,0.015) 1px,
-        transparent 1px,
-        transparent 2px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        rgba(255,255,255,0.01),
-        rgba(255,255,255,0.01) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-    pointer-events: none;
-  }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.015),
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.01),
+      rgba(255,255,255,0.01) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  pointer-events: none;
+}
 
-  .popup {
-    width: 380px;
-    background-color: #121212;
-    border: 1px solid #2a2a2a;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.9);
-    position: absolute;
-  }
+.popup {
+  width: 380px;
+  background-color: #121212;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.9);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
 
-  .titlebar {
-    padding: 6px 8px;
-    font-size: 12px;
-    color: #8f8f8f;
-    background-color: #161616;
-    border-bottom: 1px solid #2a2a2a;
-  }
+.titlebar {
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #8f8f8f;
+  background-color: #161616;
+  border-bottom: 1px solid #2a2a2a;
+}
 
-  .content {
-    padding: 16px;
-    font-size: 13px;
-    color: #b8b8b8;
-    line-height: 1.5;
-  }
+.content {
+  padding: 16px;
+  font-size: 13px;
+  color: #b8b8b8;
+  line-height: 1.5;
+}
 
-  .actions {
-    padding: 10px;
-    display: flex;
-    justify-content: flex-end;
-  }
+.actions {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
 
-  .btn {
-    padding: 3px 14px;
-    font-size: 12px;
-    background-color: #1a1a1a;
-    color: #b0b0b0;
-    border: 1px solid #333;
-  }
+.btn {
+  padding: 3px 14px;
+  font-size: 12px;
+  background-color: #1a1a1a;
+  color: #b0b0b0;
+  border: 1px solid #333;
+}
 
-  /* console */
-  .console {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(8,8,8,0.96);
-    color: #bdbdbd;
-    font-size: 13px;
-    padding: 24px;
-    display: none;
-    z-index: 10;
-  }
+/* console */
+.console {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(8,8,8,0.96);
+  color: #bdbdbd;
+  font-size: 13px;
+  padding: 24px;
+  display: none;
+  z-index: 10;
+}
 
-  .console-output {
-    white-space: pre-wrap;
-    line-height: 1.45;
-  }
+.console-output {
+  white-space: pre-wrap;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
 
-  .console-input {
-    border: none;
-    outline: none;
-    background: transparent;
-    color: #bdbdbd;
-    font-family: inherit;
-    font-size: 13px;
-    width: 100%;
-  }
+.console-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #bdbdbd;
+  font-family: inherit;
+  font-size: 13px;
+  width: 100%;
+}
+
+/* archive image overlay */
+.archive {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background-color: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.archive img {
+  max-width: 90%;
+  max-height: 90%;
+  border: 2px solid #555;
+  filter: grayscale(40%) contrast(90%);
+}
 </style>
 </head>
 
 <body>
 
-<div class="popup" id="popup">
+<div class="popup">
   <div class="titlebar">system message</div>
   <div class="content">
     <p>An internal process was interrupted.</p>
@@ -130,29 +152,19 @@
   <input class="console-input" id="input" autocomplete="off">
 </div>
 
+<div class="archive" id="archive">
+  <img src="archive.jpg" alt="archive image">
+</div>
+
 <script>
-  /* === popup drift persistence === */
-  const popup = document.getElementById("popup");
-
-  let posX = parseInt(localStorage.getItem("popupX")) || 50;
-  let posY = parseInt(localStorage.getItem("popupY")) || 50;
-
-  // drift direction (fixed)
-  posX += 3;
-  posY += 1;
-
-  localStorage.setItem("popupX", posX);
-  localStorage.setItem("popupY", posY);
-
-  popup.style.left = `calc(${posX}% - 190px)`;
-  popup.style.top = `calc(${posY}% - 120px)`;
-
-  /* === key sequence ZERO === */
+  // key sequence ZERO
   const sequence = ["z","e","r","o"];
   let seqIndex = 0;
+
   const consoleEl = document.getElementById("console");
   const input = document.getElementById("input");
   const output = document.getElementById("output");
+  const archiveEl = document.getElementById("archive");
 
   document.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === sequence[seqIndex]) {
@@ -167,37 +179,35 @@
     }
   });
 
-  /* === console logic === */
-  let errors = 0;
-  const errorMessages = [
-    "error : invalid command",
-    "error : access not permitted",
-    "error : unresolved reference",
-    "error : operation rejected"
-  ];
+  let attempts = 0;
 
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") {
-      const msg = errorMessages[Math.floor(Math.random()*errorMessages.length)];
-      output.textContent += `\n> ${input.value}\n> ${msg}\n`;
-      input.value = "";
-      errors++;
+      const val = input.value.trim().toLowerCase();
 
-      if (errors >= 3) {
-        consoleEl.style.display = "none";
-        output.textContent = 
-`> runtime shell initialized
-> integrity check : failed
-> archive status : inconsistent
+      if(val === "will") {
+        // afficher l'image archive
+        archiveEl.style.display = "flex";
+      } else {
+        output.textContent += `\n> ${input.value}\n> invalid command\n`;
+        attempts++;
 
-> _`;
-        errors = 0;
+        if (attempts >= 3) {
+          output.textContent += `\n> access denied: you are not welcome\n`;
+          input.disabled = true;
+        }
       }
+
+      input.value = "";
     }
+  });
+
+  // fermer l'image si on clique dessus
+  archiveEl.addEventListener("click", () => {
+    archiveEl.style.display = "none";
   });
 </script>
 
-<!-- state preserved -->
 </body>
 </html>
 
