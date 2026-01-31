@@ -39,6 +39,7 @@ body::after {
   pointer-events: none;
 }
 
+/* POPUP */
 .popup {
   width: 380px;
   background-color: #121212;
@@ -79,7 +80,7 @@ body::after {
   border: 1px solid #333;
 }
 
-/* console */
+/* CONSOLE */
 .console {
   position: fixed;
   inset: 0;
@@ -107,7 +108,7 @@ body::after {
   width: 100%;
 }
 
-/* archive image overlay */
+/* IMAGE ARCHIVE */
 .archive {
   position: fixed;
   inset: 0;
@@ -129,6 +130,7 @@ body::after {
 
 <body>
 
+<!-- POPUP PRINCIPAL -->
 <div class="popup">
   <div class="titlebar">system message</div>
   <div class="content">
@@ -141,6 +143,7 @@ body::after {
   </div>
 </div>
 
+<!-- CONSOLE -->
 <div class="console" id="console">
   <div class="console-output" id="output">
 > runtime shell initialized
@@ -152,62 +155,74 @@ body::after {
   <input class="console-input" id="input" autocomplete="off">
 </div>
 
+<!-- IMAGE ARCHIVE -->
 <div class="archive" id="archive">
   <img src="archive.jpg" alt="archive image">
 </div>
 
+<!-- SONS -->
+<audio id="hum" loop>
+  <source src="hum.mp3" type="audio/mpeg">
+</audio>
+<audio id="glitch">
+  <source src="glitch.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-  // key sequence ZERO
-  const sequence = ["z","e","r","o"];
-  let seqIndex = 0;
+const sequence = ["z","e","r","o"];
+let seqIndex = 0;
 
-  const consoleEl = document.getElementById("console");
-  const input = document.getElementById("input");
-  const output = document.getElementById("output");
-  const archiveEl = document.getElementById("archive");
+const consoleEl = document.getElementById("console");
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+const archiveEl = document.getElementById("archive");
+const hum = document.getElementById("hum");
+const glitch = document.getElementById("glitch");
 
-  document.addEventListener("keydown", e => {
-    if (e.key.toLowerCase() === sequence[seqIndex]) {
-      seqIndex++;
-      if (seqIndex === sequence.length) {
-        consoleEl.style.display = "block";
-        input.focus();
-        seqIndex = 0;
-      }
-    } else {
+document.addEventListener("keydown", e => {
+  if (e.key.toLowerCase() === sequence[seqIndex]) {
+    seqIndex++;
+    if (seqIndex === sequence.length) {
+      consoleEl.style.display = "block";
+      input.focus();
+      // sons subtils
+      hum.volume = 0.05;
+      hum.play().catch(()=>{});
+      glitch.volume = 0.2;
+      glitch.play().catch(()=>{});
       seqIndex = 0;
     }
-  });
+  } else {
+    seqIndex = 0;
+  }
+});
 
-  let attempts = 0;
+let attempts = 0;
 
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      const val = input.value.trim().toLowerCase();
+input.addEventListener("keydown", e => {
+  if(e.key==="Enter"){
+    const val = input.value.trim().toLowerCase();
+    input.value="";
 
-      if(val === "will") {
-        // afficher l'image archive
-        archiveEl.style.display = "flex";
-      } else {
-        output.textContent += `\n> ${input.value}\n> invalid command\n`;
-        attempts++;
-
-        if (attempts >= 3) {
-          output.textContent += `\n> access denied: you are not welcome\n`;
-          input.disabled = true;
-        }
-      }
-
-      input.value = "";
+    if(val==="will"){
+      archiveEl.style.display="flex";
+      return;
     }
-  });
 
-  // fermer l'image si on clique dessus
-  archiveEl.addEventListener("click", () => {
-    archiveEl.style.display = "none";
-  });
+    output.textContent += `\n> ${val}\n> invalid command\n`;
+    attempts++;
+    if(attempts>=3){
+      output.textContent += `\n> access denied: you are not welcome\n`;
+      input.disabled=true;
+    }
+  }
+});
+
+// fermer l'image archive
+archiveEl.addEventListener("click", ()=>{
+  archiveEl.style.display="none";
+});
 </script>
 
 </body>
 </html>
-
