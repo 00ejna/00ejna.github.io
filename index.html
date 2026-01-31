@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Tahoma", "MS Sans Serif", Arial, sans-serif;
+    }
+
+    .window {
+      width: 360px;
+      background-color: #c0c0c0;
+      border: 2px solid #808080;
+      box-shadow: 2px 2px 0 #404040;
+    }
+
+    .title-bar {
+      background-color: #000080;
+      color: #fff;
+      padding: 4px 6px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-bar span {
+      user-select: none;
+    }
+
+    .close {
+      width: 16px;
+      height: 14px;
+      background-color: #c0c0c0;
+      border: 1px solid #404040;
+      text-align: center;
+      line-height: 12px;
+      font-size: 12px;
+      color: #000;
+    }
+
+    .content {
+      padding: 16px;
+      font-size: 13px;
+      color: #000;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      background-color: #fff;
+      border: 1px solid #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-family: serif;
+    }
+
+    .text {
+      line-height: 1.4;
+    }
+
+    .actions {
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 2px 18px;
+      font-size: 12px;
+      background-color: #e0e0e0;
+      border: 2px outset #fff;
+      cursor: default;
+    }
+
+    .btn:active {
+      border: 2px inset #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <span>System</span>
+      <div class="close">×</div>
+    </div>
+
+    <div class="content">
+      <div class="icon">!</div>
+      <div class="text">
+        An unexpected condition has occurred.<br><br>
+        The operation could not be completed.
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="btn">OK</div>
+    </div>
+  </div>
+
+  <!-- do not display -->
+</body>
+</html>
