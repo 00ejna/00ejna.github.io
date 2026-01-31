@@ -46,3 +46,126 @@
     width: 380px;
     background-color: #121212;
     border: 1px solid #2a2a2a;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.9);
+    position: absolute;
+  }
+
+  .popup::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='1' height='1' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .titlebar {
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #8f8f8f;
+    background-color: #161616;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .content {
+    padding: 16px;
+    font-size: 13px;
+    color: #b8b8b8;
+    line-height: 1.5;
+  }
+
+  .content p {
+    margin: 0 0 12px 0;
+  }
+
+  .actions {
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 3px 14px;
+    font-size: 12px;
+    background-color: #1a1a1a;
+    color: #b0b0b0;
+    border: 1px solid #333;
+  }
+
+  /* hidden console */
+  .console {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(8,8,8,0.96);
+    color: #bdbdbd;
+    font-size: 13px;
+    padding: 24px;
+    display: none;
+    z-index: 10;
+  }
+
+  .console pre {
+    margin: 0;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="popup" id="popup">
+  <div class="titlebar">system message</div>
+  <div class="content">
+    <p>An internal process was interrupted.</p>
+    <p>The current state cannot be verified.</p>
+    <p>Further action is not recommended.</p>
+  </div>
+  <div class="actions">
+    <div class="btn">OK</div>
+  </div>
+</div>
+
+<div class="console" id="console">
+<pre>
+> runtime shell initialized
+> integrity check : failed
+> archive status : inconsistent
+
+> observer detected
+> classification pending
+
+> _
+</pre>
+</div>
+
+<script>
+  /* popup slight drift */
+  const popup = document.getElementById("popup");
+  const offsetX = Math.floor(Math.random() * 6) - 3;
+  const offsetY = Math.floor(Math.random() * 6) - 3;
+
+  popup.style.left = `calc(50% + ${offsetX}px)`;
+  popup.style.top = `calc(50% + ${offsetY}px)`;
+  popup.style.transform = "translate(-50%, -50%)";
+
+  /* key sequence detection: Z E R O */
+  const sequence = ["z", "e", "r", "o"];
+  let index = 0;
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === sequence[index]) {
+      index++;
+      if (index === sequence.length) {
+        document.getElementById("console").style.display = "block";
+        index = 0;
+      }
+    } else {
+      index = 0;
+    }
+  });
+</script>
+
+<!-- state preserved -->
+</body>
+</html>
