@@ -1,383 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>system message</title>
+<meta charset="UTF-8">
+<title>System Message</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  :root{
-    --bg1:#0a0a0a;
-    --panel:#121212;
-    --muted:#8f8f8f;
-    --fg:#b8b8b8;
-    --accent:#555;
-  }
-  html,body{height:100%;margin:0;font-family:"Courier New",Courier,monospace;background:
-    radial-gradient(circle at 20% 30%, rgba(80,80,90,0.16), transparent 60%),
-    radial-gradient(circle at 80% 70%, rgba(40,60,70,0.12), transparent 55%),
-    linear-gradient(180deg,var(--bg1),#050505);
-    color:var(--fg);overflow:hidden;
-  }
-  /* subtle CRT / noise */
-  body::after{
-    content:"";position:fixed;inset:0;pointer-events:none;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.012), rgba(255,255,255,0.012) 1px, transparent 1px, transparent 2px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.008), rgba(255,255,255,0.008) 1px, transparent 1px, transparent 3px);
-    opacity:0.9;
-  }
-
-  /* main popup */
-  .popup{width:380px;background:var(--panel);border:1px solid #2a2a2a;box-shadow:0 6px 18px rgba(0,0,0,0.9);
-    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}
-  .titlebar{padding:6px 8px;font-size:12px;color:var(--muted);background:#161616;border-bottom:1px solid #2a2a2a;}
-  .content{padding:16px;font-size:13px;color:var(--fg);line-height:1.5;}
-  .actions{padding:10px;display:flex;justify-content:flex-end;}
-  .btn{padding:3px 14px;font-size:12px;background:#1a1a1a;color:var(--fg);border:1px solid #333;cursor:pointer;}
-
-  /* console overlay (hidden until ZERO) */
-  .console{position:fixed;inset:0;background:rgba(8,8,8,0.96);color:var(--fg);font-size:13px;padding:24px;display:none;z-index:30;}
-  .console-output{white-space:pre-wrap;line-height:1.45;margin-bottom:8px;max-height:55vh;overflow:auto;}
-  .console-input{border:none;outline:none;background:transparent;color:var(--fg);font-family:inherit;font-size:13px;width:100%;}
-
-  /* site layer revealed when console opens */
-  .site-layer{position:fixed;inset:0;display:none;z-index:20;pointer-events:none}
-  .site-bg{position:absolute;inset:0;background:transparent}
-  .logo-wrap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-  .logo{font-family:inherit;color:var(--fg);font-size:56px;letter-spacing:6px;opacity:0;display:inline-block}
-  .loader{height:6px;width:120px;margin:12px auto 0;border:1px solid #222;background:#0e0e0e;overflow:hidden;opacity:0}
-  .loader .bar{height:100%;width:0;background:linear-gradient(90deg,#777,#444);}
-
-  /* bottom-right menu */
-  .menu{position:fixed;right:18px;bottom:18px;display:flex;gap:10px;pointer-events:auto;z-index:25}
-  .menu button{background:rgba(20,20,20,0.9);color:var(--fg);border:1px solid #333;padding:8px 10px;font-size:12px;cursor:pointer}
-  .menu button:hover{border-color:var(--accent);}
-
-  /* archive overlay (for 'will') */
-  .archive{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);z-index:40}
-  .archive img{max-width:90%;max-height:90%;border:2px solid #555;filter:grayscale(30%) contrast(90%);}
-
-  /* full-white takeover for who are you sequence */
-  .whiteout{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60}
-  .eyes{width:70vmin;max-width:900px;opacity:0;transition:opacity .35s ease}
-  .word{font-size:6vmin;font-family:inherit;color:#000;margin-top:18px;opacity:0;transition:opacity .25s ease}
-
-  /* small responsiveness */
-  @media (max-width:460px){
-    .popup{width:320px}
-    .logo{font-size:40px}
-    .word{font-size:8vmin}
-  }
-  /* mobile chatbox (hidden by default) */
-.mobile-chat {
-  position: fixed;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 28px);
-  max-width: 420px;
-  background: rgba(18,18,18,0.95);
-  border: 1px solid #2a2a2a;
-  padding: 10px;
-  display: none;
-  z-index: 50;
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at top left, #2a1c1c, #0b0b0b 70%),
+    radial-gradient(circle at bottom right, #1c1f2a, #000 70%);
+  font-family: "Courier New", monospace;
+  overflow: hidden;
 }
 
-.mobile-chat input {
+/* POPUP */
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15,15,15,0.95);
+  border: 1px solid #2b2b2b;
+  padding: 18px;
+  width: 320px;
+  color: #cfcfcf;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+
+.popup-title {
+  font-size: 13px;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+.popup button {
+  margin-top: 14px;
+  background: #111;
+  border: 1px solid #333;
+  color: #aaa;
+  padding: 4px 14px;
+  font-family: inherit;
+  cursor: default;
+}
+
+/* CONSOLE */
+.console {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 520px;
+  background: rgba(5,5,5,0.9);
+  border: 1px solid #222;
+  padding: 10px;
+  color: #bdbdbd;
+  font-size: 13px;
+}
+
+.console-output {
+  max-height: 140px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.console input {
   width: 100%;
   background: transparent;
   border: none;
   outline: none;
   color: #bdbdbd;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 14px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+/* ARCHIVE */
+.archive {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.archive img {
+  max-width: 80%;
+  opacity: 0.9;
+}
+
+/* WHO SEQUENCE */
+.whiteout {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 30;
+}
+
+#eyesCanvas {
+  image-rendering: pixelated;
+  margin-bottom: 40px;
+}
+
+.word {
+  font-size: 40px;
+  color: #000;
+  letter-spacing: 2px;
 }
 </style>
 </head>
+
 <body>
 
-  <!-- main popup -->
-  <div class="popup" aria-hidden="false">
-    <div class="titlebar">system message</div>
-    <div class="content">
-      <p>An internal process was interrupted.</p>
-      <p>The current state cannot be verified.</p>
-      <p>Further action is not recommended.</p>
-    </div>
-    <div class="actions">
-      <div class="btn" id="okBtn" role="button" tabindex="0">OK</div>
-    </div>
+<div class="popup">
+  <div class="popup-title">system message</div>
+  <div>process interrupted</div>
+  <button>OK</button>
+</div>
+
+<div class="console">
+  <div class="console-output" id="output">
+> system initialized
   </div>
+  <input type="text" id="input" autocomplete="off">
+</div>
 
-  <!-- site-layer (revealed when console opens) -->
-  <div class="site-layer" id="siteLayer" aria-hidden="true">
-    <div class="site-bg"></div>
-    <div class="logo-wrap">
-      <div class="logo" id="logo">00</div>
-      <div class="loader" id="loader"><div class="bar" id="loaderBar"></div></div>
-    </div>
-  </div>
+<div class="archive" id="archive">
+  <img src="archive.jpg" alt="archive">
+</div>
 
-  <!-- bottom-right menu -->
-  <div class="menu" id="menu" style="display:none" aria-hidden="true">
-    <button id="chatBtn">chat</button>
-    <button id="galleryBtn">gallery</button>
-    <button id="cancelBtn">cancel</button>
-    <button id="rclistBtn">rclist</button>
-  </div>
-
-  <!-- console overlay -->
-  <div class="console" id="console" aria-hidden="true">
-    <div class="console-output" id="output">
-&gt; runtime shell initialized
-&gt; integrity check : failed
-&gt; archive status : inconsistent
-
-&gt; _
-    </div>
-    <input class="console-input" id="input" autocomplete="off" aria-label="console input">
-  </div>
-
-  <!-- archive image (triggered by 'will') -->
-  <div class="archive" id="archive" aria-hidden="true"><img src="archive.jpg" alt="archive"></div>
-
-  <!-- white takeover for 'who are you' -->
-  <div class="whiteout" id="whiteout" aria-hidden="true">
-    <!-- SVG eyes: stylized realistic-ish eyes drawn inline -->
-    <svg class="eyes" id="eyesSVG" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- Left eye -->
-      <g transform="translate(120,50) scale(0.8)">
-        <path d="M50 200 C150 40 350 40 450 200 C350 340 150 340 50 200 Z" fill="#fff" stroke="#111" stroke-width="6"/>
-        <ellipse cx="250" cy="200" rx="80" ry="80" fill="#0f0f0f"/>
-        <circle cx="230" cy="180" r="18" fill="#fff" opacity="0.12"/>
-      </g>
-      <!-- Right eye -->
-      <g transform="translate(500,50) scale(0.8)">
-        <path d="M50 200 C150 40 350 40 450 200 C350 340 150 340 50 200 Z" fill="#fff" stroke="#111" stroke-width="6"/>
-        <ellipse cx="250" cy="200" rx="80" ry="80" fill="#0f0f0f"/>
-        <circle cx="270" cy="180" r="18" fill="#fff" opacity="0.12"/>
-      </g>
-    </svg>
-    <div class="word" id="wordText"></div>
-  </div>
-  <div class="mobile-chat" id="mobileChat">
-  <input type="text" id="mobileInput" placeholder="input">
+<div class="whiteout" id="whiteout">
+  <canvas id="eyesCanvas" width="320" height="120"></canvas>
+  <div class="word" id="word"></div>
 </div>
 
 <script>
-  // --- small helpers
-  const seq = ["z","e","r","o"];
-  let seqIdx = 0;
-  const consoleEl = document.getElementById('console');
-  const inputEl = document.getElementById('input');
-  const outputEl = document.getElementById('output');
-  const siteLayer = document.getElementById('siteLayer');
-  const menu = document.getElementById('menu');
-  const logo = document.getElementById('logo');
-  const loader = document.getElementById('loader');
-  const loaderBar = document.getElementById('loaderBar');
-  const archive = document.getElementById('archive');
-  const whiteout = document.getElementById('whiteout');
-  const eyesSVG = document.getElementById('eyesSVG');
-  const wordText = document.getElementById('wordText');
-  const okBtn = document.getElementById('okBtn');
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+const archive = document.getElementById("archive");
+const whiteout = document.getElementById("whiteout");
+const word = document.getElementById("word");
 
-  // OK button: clickable but does nothing (visual feedback only)
-  okBtn.addEventListener('click', (e)=>{
-    okBtn.style.transform='translateY(1px)'; // tiny feedback
-    setTimeout(()=> okBtn.style.transform='none',120);
-  });
+let attempts = 0;
 
-  // When console is opened: reveal "real site" elements
-  function revealSiteLayer(){
-    // show console
-    consoleEl.style.display='block';
-    consoleEl.setAttribute('aria-hidden','false');
-    // reveal site layer and start logo loading animation
-    siteLayer.style.display='block';
-    siteLayer.setAttribute('aria-hidden','false');
-    // small fade-in
-    logo.style.opacity = '0';
-    loader.style.opacity = '0';
-    setTimeout(()=>{
-      logo.style.transition='opacity 350ms ease';
-      loader.style.transition='opacity 350ms ease';
-      logo.style.opacity='1';
-      loader.style.opacity='1';
-      // animate loader bar
-      loaderBar.style.transition='width 2200ms linear';
-      loaderBar.style.width='100%';
-    },120);
+input.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
 
-    // after loading finish, show menu (bottom-right)
-    setTimeout(()=>{
-      menu.style.display='flex';
-      menu.setAttribute('aria-hidden','false');
-      // let menu buttons be visually clickable but do nothing
-      ['chatBtn','galleryBtn','cancelBtn','rclistBtn'].forEach(id=>{
-        const btn=document.getElementById(id);
-        btn.addEventListener('click', (ev)=>{
-          // tiny visual feedback but no action
-          btn.style.transform='translateY(1px)';
-          setTimeout(()=>btn.style.transform='none',120);
-        });
-      });
-      // reset loader bar for possible reuse
-      setTimeout(()=>{ loaderBar.style.width='0%'; },400);
-    },2400);
+  const cmd = input.value.trim().toLowerCase();
+  input.value = "";
+  attempts++;
+
+  output.textContent += "\n> " + cmd;
+
+  if (cmd === "will") {
+    archive.style.display = "flex";
+    output.textContent += "\narchive reference loaded";
+    return;
   }
 
-  // sequence detection for Z E R O
-  document.addEventListener('keydown', e=>{
-    const k = e.key.toLowerCase();
-    if(k === seq[seqIdx]){
-      seqIdx++;
-      if(seqIdx === seq.length){
-        // open console and reveal site
-        revealSiteLayer();
-        inputEl.focus();
-        seqIdx=0;
-        // subtle beep: we avoid auto-audio to respect browsers (no auto-play)
-      }
-    } else seqIdx = 0;
-  });
-
-  // console behavior
-  let attempts = 0;
-  inputEl.addEventListener('keydown', e=>{
-    if(e.key === 'Enter'){
-      const raw = inputEl.value || '';
-      const cmd = raw.trim().toLowerCase();
-      inputEl.value='';
-      // special 'will' -> show archive image
-      if(cmd === 'will'){
-        archive.style.display='flex';
-        archive.setAttribute('aria-hidden','false');
-        return;
-      }
-
-      // special 'who are you' trigger
-      if(cmd === 'who are you'){
-        // lock input and begin sequence
-        inputEl.disabled = true;
-        // start white takeover
-        startWhoSequence();
-        return;
-      }
-
-      // otherwise always invalid command
-      outputEl.textContent += `\n> ${raw}\n> invalid command\n`;
-      outputEl.scrollTop = outputEl.scrollHeight;
-      attempts++;
-      if(attempts >= 3){
-        outputEl.textContent += `\n> access denied: you are not welcome\n`;
-        inputEl.disabled = true;
-      }
-    }
-  });
-
-  // close archive on click
-  archive.addEventListener('click', ()=>{ archive.style.display='none'; archive.setAttribute('aria-hidden','true'); });
-
-  // WHO ARE YOU sequence
-  function startWhoSequence(){
-    // make whiteout visible
-    whiteout.style.display='flex';
-    whiteout.setAttribute('aria-hidden','false');
-    // ensure eyes hidden initially
-    eyesSVG.style.opacity = '0';
-    wordText.style.opacity = '0';
-    // small delay then show eyes (fade in)
-    setTimeout(()=>{ eyesSVG.style.opacity = '1'; }, 120);
-    // sequence of words
-    const words = ['you','who','are','you ?'];
-    let i = 0;
-
-    // show first word after eyes appear
-    setTimeout(()=> showNextWord(), 700);
-
-    function showNextWord(){
-      if(i >= words.length){
-        // end: fade out to white fully then close or blank
-        setTimeout(()=> finalizeClose(), 700);
-        return;
-      }
-      // display the current word briefly
-      wordText.textContent = words[i];
-      wordText.style.opacity = '1';
-      // show for 700ms then hide and go next
-      setTimeout(()=>{
-        wordText.style.opacity = '0';
-        i++;
-        setTimeout(showNextWord, 300);
-      }, 700);
-    }
+  if (cmd === "who are you") {
+    startWho();
+    return;
   }
 
-  function finalizeClose(){
-    // attempt to close window (may be blocked), then fallback to blank white
-    try{ window.close(); }catch(e){}
-    // clear DOM / show final blank white screen
-    document.documentElement.style.transition='opacity 600ms linear';
-    document.documentElement.style.opacity='0';
-    setTimeout(()=>{
-      // replace with blank body (ensures true white)
-      document.body.innerHTML = '';
-      document.body.style.background = '#fff';
-    },650);
+  if (attempts >= 3) {
+    output.textContent += "\naccess denied – you are not welcome";
+    input.disabled = true;
+    return;
   }
 
-  // ensure archive image alt click closes for keyboard too
-  archive.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape') archive.style.display='none';
-  });
-
-  // small: allow pressing ESC to close console if allowed (unless disabled after attempts)
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      if(!inputEl.disabled){
-        consoleEl.style.display = 'none';
-        consoleEl.setAttribute('aria-hidden','true');
-      }
-      archive.style.display='none';
-      archive.setAttribute('aria-hidden','true');
-    }
-  });
-
-  // trap focus when console open
-  document.addEventListener('focusin', e=>{
-    if(consoleEl.style.display === 'block' && e.target !== inputEl) inputEl.focus();
-  });
-  // === MOBILE PINCH → CHATBOX ===
-
-let initialDistance = null;
-const mobileChat = document.getElementById("mobileChat");
-const mobileInput = document.getElementById("mobileInput");
-
-window.addEventListener("touchmove", (e) => {
-  if (e.touches.length === 2) {
-    const dx = e.touches[0].clientX - e.touches[1].clientX;
-    const dy = e.touches[0].clientY - e.touches[1].clientY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (!initialDistance) {
-      initialDistance = distance;
-    } else if (distance < initialDistance * 0.85) {
-      mobileChat.style.display = "block";
-      mobileInput.focus();
-    }
-  }
-}, { passive: true });
-
-mobileInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    if (mobileInput.value.trim().toLowerCase() === "zero") {
-      revealSiteLayer(); // EXISTE DÉJÀ
-      mobileChat.style.display = "none";
-    }
-    mobileInput.value = "";
-  }
+  output.textContent += "\ninvalid command";
+  output.scrollTop = output.scrollHeight;
 });
+
+archive.addEventListener("click", () => {
+  archive.style.display = "none";
+});
+
+function drawEyes() {
+  const c = document.getElementById("eyesCanvas");
+  const ctx = c.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0,0,c.width,c.height);
+
+  function eye(x,y){
+    ctx.fillStyle = "#f0f0f0";
+    ctx.fillRect(x,y,90,45);
+
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x,y,90,45);
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(x+38,y+18,18,18);
+
+    ctx.strokeStyle = "#6b0000";
+    ctx.beginPath();
+    ctx.moveTo(x+15,y+10);
+    ctx.lineTo(x+30,y+25);
+    ctx.lineTo(x+20,y+35);
+    ctx.stroke();
+  }
+
+  eye(30,40);
+  eye(200,43);
+}
+
+function startWho() {
+  whiteout.style.display = "flex";
+  drawEyes();
+
+  const phrase = ["you", "who", "are", "you ?"];
+  let i = 0;
+
+  function nextWord() {
+    if (i >= phrase.length) {
+      setTimeout(() => location.reload(), 1500);
+      return;
+    }
+
+    let text = phrase[i];
+    let j = 0;
+    word.textContent = "";
+
+    const interval = setInterval(() => {
+      if (Math.random() < 0.2) {
+        word.textContent += "_";
+        return;
+      }
+      word.textContent += text[j];
+      j++;
+      if (j >= text.length) {
+        clearInterval(interval);
+        i++;
+        setTimeout(nextWord, 900);
+      }
+    }, 220);
+  }
+
+  setTimeout(nextWord, 1000);
+}
 </script>
+
 </body>
 </html>
