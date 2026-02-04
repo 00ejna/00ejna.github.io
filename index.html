@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>system</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 20% 20%, #2a1c1c, transparent 40%),
+    radial-gradient(circle at 80% 80%, #1c1f2a, transparent 40%),
+    #0a0a0a;
+  font-family: "Courier New", monospace;
+  overflow: hidden;
+}
+
+/* POPUP */
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(12,12,12,0.95);
+  border: 1px solid #2a2a2a;
+  width: 320px;
+  padding: 18px;
+  color: #cfcfcf;
+  box-shadow: 0 0 50px rgba(0,0,0,0.9);
+}
+
+.popup-title {
+  font-size: 13px;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.popup button {
+  margin-top: 14px;
+  background: #111;
+  border: 1px solid #333;
+  color: #aaa;
+  padding: 4px 16px;
+  cursor: default;
+}
+
+/* CONSOLE */
+.console {
+  display: none;
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 520px;
+  background: rgba(5,5,5,0.9);
+  border: 1px solid #222;
+  padding: 10px;
+  color: #bdbdbd;
+  font-size: 13px;
+}
+
+.console-output {
+  max-height: 140px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.console input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #bdbdbd;
+  font-family: inherit;
+}
+
+/* ARCHIVE */
+.archive {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.archive img {
+  max-width: 80%;
+  opacity: 0.9;
+}
+
+/* WHO */
+.whiteout {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 30;
+}
+
+#eyesCanvas {
+  image-rendering: pixelated;
+  margin-bottom: 40px;
+  filter: contrast(1.2) saturate(1.4);
+}
+
+.word {
+  font-size: 40px;
+  color: #000;
+  letter-spacing: 2px;
+}
+
+/* MOBILE CHAT */
+.mobile-input {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  border: 1px solid #222;
+  padding: 6px;
+  color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="popup">
+  <div class="popup-title">system message</div>
+  <div>process interrupted</div>
+  <button>OK</button>
+</div>
+
+<div class="console" id="console">
+  <div class="console-output" id="output">
+> system initialized
+  </div>
+  <input type="text" id="input" autocomplete="off">
+</div>
+
+<div class="archive" id="archive">
+  <img src="archive.jpg" alt="archive">
+</div>
+
+<div class="whiteout" id="whiteout">
+  <canvas id="eyesCanvas" width="320" height="140"></canvas>
+  <div class="word" id="word"></div>
+</div>
+
+<input class="mobile-input" id="mobileInput" placeholder="enter">
+
+<script>
+const consoleEl = document.getElementById("console");
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+const archive = document.getElementById("archive");
+const whiteout = document.getElementById("whiteout");
+const word = document.getElementById("word");
+const mobileInput = document.getElementById("mobileInput");
+
+let keyBuffer = "";
+let attempts = 0;
+
+/* ACTIVATE CONSOLE WITH OO */
+document.addEventListener("keydown", e => {
+  keyBuffer += e.key.toLowerCase();
+  keyBuffer = keyBuffer.slice(-2);
+  if (keyBuffer === "oo") {
+    consoleEl.style.display = "block";
+    input.focus();
+  }
+});
+
+/* MOBILE PINCH */
+let lastScale = 1;
+document.addEventListener("touchmove", e => {
+  if (e.touches.length === 2) {
+    mobileInput.style.display = "block";
+  }
+});
+
+mobileInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && mobileInput.value.toLowerCase() === "oo") {
+    consoleEl.style.display = "block";
+    mobileInput.style.display = "none";
+  }
+});
+
+/* CONSOLE INPUT */
+input.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+
+  const cmd = input.value.trim().toLowerCase();
+  input.value = "";
+  attempts++;
+
+  output.textContent += "\n> " + cmd;
+
+  if (cmd === "will") {
+    archive.style.display = "flex";
+    output.textContent += "\narchive reference loaded";
+    return;
+  }
+
+  if (cmd === "who are you") {
+    startWho();
+    return;
+  }
+
+  if (attempts >= 3) {
+    output.textContent += "\naccess denied – you are not welcome";
+    input.disabled = true;
+    return;
+  }
+
+  output.textContent += "\ninvalid command";
+});
+
+/* ARCHIVE */
+archive.onclick = () => archive.style.display = "none";
+
+/* MONSTER EYES – PAINT STYLE */
+function drawEyes() {
+  const c = document.getElementById("eyesCanvas");
+  const ctx = c.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0,0,c.width,c.height);
+
+  function eye(x,y){
+    // sclera
+    ctx.fillStyle = "#f3f3f3";
+    ctx.fillRect(x,y,110,55);
+
+    // blood veins
+    ctx.strokeStyle = "#7a0000";
+    ctx.lineWidth = 2;
+    for(let i=0;i<5;i++){
+      ctx.beginPath();
+      ctx.moveTo(x+Math.random()*30, y+Math.random()*20);
+      ctx.lineTo(x+60+Math.random()*40, y+20+Math.random()*30);
+      ctx.stroke();
+    }
+
+    // iris almost gone
+    ctx.fillStyle = "#111";
+    ctx.fillRect(x+48,y+20,14,14);
+
+    // pupil
+    ctx.fillStyle = "#000";
+    ctx.fillRect(x+52,y+24,6,6);
+
+    // dirty outline
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x,y,110,55);
+  }
+
+  eye(30,50);
+  eye(180,55);
+}
+
+function startWho(){
+  whiteout.style.display = "flex";
+  drawEyes();
+
+  const phrase = ["you", "who", "are", "you ?"];
+  let i = 0;
+
+  function next(){
+    if(i >= phrase.length){
+      setTimeout(() => location.reload(), 2000);
+      return;
+    }
+
+    let text = phrase[i];
+    let j = 0;
+    word.textContent = "";
+
+    const interval = setInterval(()=>{
+      if(Math.random() < 0.25){
+        word.textContent += "_";
+        return;
+      }
+      word.textContent += text[j];
+      j++;
+      if(j >= text.length){
+        clearInterval(interval);
+        i++;
+        setTimeout(next, 1000);
+      }
+    }, 260);
+  }
+
+  setTimeout(next, 1200);
+}
+</script>
+
+</body>
+</html>
