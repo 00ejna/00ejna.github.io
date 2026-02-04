@@ -14,8 +14,8 @@ html, body {
     linear-gradient(180deg, #0e0e0e, #050505),
     repeating-linear-gradient(
       0deg,
-      rgba(255,255,255,0.02),
-      rgba(255,255,255,0.02) 1px,
+      rgba(255,255,255,0.015),
+      rgba(255,255,255,0.015) 1px,
       transparent 1px,
       transparent 2px
     );
@@ -31,7 +31,7 @@ html, body {
   transform: translate(-50%, -50%);
   background: #0c0c0c;
   border: 1px solid #2a2a2a;
-  width: 340px;
+  width: 360px;
   padding: 18px;
   color: #c9c9c9;
   box-shadow: 0 0 30px rgba(0,0,0,0.9);
@@ -41,6 +41,12 @@ html, body {
   font-size: 12px;
   margin-bottom: 10px;
   opacity: 0.7;
+}
+
+.popup-text {
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.85;
 }
 
 .popup button {
@@ -124,6 +130,21 @@ html, body {
   opacity: 0;
   transition: opacity 0.4s;
 }
+
+/* MOBILE INPUT */
+.mobile-input {
+  display: none;
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.9);
+  border: 1px solid #222;
+  padding: 6px 10px;
+  color: #aaa;
+  font-family: inherit;
+  z-index: 50;
+}
 </style>
 </head>
 
@@ -131,7 +152,12 @@ html, body {
 
 <div class="popup">
   <div class="popup-title">system message</div>
-  <div>process interrupted</div>
+  <div class="popup-text">
+    An unexpected condition has occurred.<br>
+    The operation could not be completed as requested.<br><br>
+    Some processes may be unstable or unavailable.<br>
+    Further interaction is not recommended.
+  </div>
   <button>OK</button>
 </div>
 
@@ -151,6 +177,8 @@ html, body {
   <div class="word" id="word"></div>
 </div>
 
+<input class="mobile-input" id="mobileInput" placeholder="enter">
+
 <script>
 const consoleEl = document.getElementById("console");
 const input = document.getElementById("input");
@@ -158,11 +186,12 @@ const output = document.getElementById("output");
 const archive = document.getElementById("archive");
 const whiteout = document.getElementById("whiteout");
 const word = document.getElementById("word");
+const mobileInput = document.getElementById("mobileInput");
 
 let keyBuffer = "";
 let attempts = 0;
 
-/* ACTIVATE CONSOLE WITH OO */
+/* PC: ACTIVATE CONSOLE WITH OO */
 document.addEventListener("keydown", e => {
   keyBuffer += e.key.toLowerCase();
   keyBuffer = keyBuffer.slice(-2);
@@ -172,7 +201,23 @@ document.addEventListener("keydown", e => {
   }
 });
 
-/* CONSOLE */
+/* MOBILE: PINCH TO ENABLE INPUT */
+document.addEventListener("touchmove", e => {
+  if (e.touches.length === 2) {
+    mobileInput.style.display = "block";
+  }
+});
+
+/* MOBILE: TYPE OO */
+mobileInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && mobileInput.value.toLowerCase() === "oo") {
+    consoleEl.style.display = "block";
+    mobileInput.style.display = "none";
+    mobileInput.value = "";
+  }
+});
+
+/* CONSOLE INPUT */
 input.addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
 
@@ -213,22 +258,19 @@ function drawEyes(){
   ctx.clearRect(0,0,c.width,c.height);
 
   function eye(cx, cy){
-    // sclera
-    ctx.fillStyle = "#f5f5f5";
+    ctx.fillStyle = "#f6f6f6";
     ctx.beginPath();
     ctx.ellipse(cx, cy, 70, 40, 0, 0, Math.PI*2);
     ctx.fill();
 
-    // grain
-    for(let i=0;i<300;i++){
-      ctx.fillStyle = `rgba(200,200,200,${Math.random()*0.2})`;
+    for(let i=0;i<350;i++){
+      ctx.fillStyle = `rgba(200,200,200,${Math.random()*0.25})`;
       ctx.fillRect(cx-70+Math.random()*140, cy-40+Math.random()*80, 1,1);
     }
 
-    // veins
     ctx.strokeStyle = "#7a0000";
     ctx.lineWidth = 1;
-    for(let i=0;i<12;i++){
+    for(let i=0;i<14;i++){
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(
@@ -238,10 +280,9 @@ function drawEyes(){
       ctx.stroke();
     }
 
-    // pupil
     ctx.fillStyle = "#000";
     ctx.beginPath();
-    ctx.ellipse(cx, cy, 6, 10, 0, 0, Math.PI*2);
+    ctx.ellipse(cx, cy, 5, 10, 0, 0, Math.PI*2);
     ctx.fill();
   }
 
@@ -269,8 +310,8 @@ function startWho(){
     setTimeout(()=>{
       word.style.opacity = "0";
       i++;
-      setTimeout(nextWord, 900 + Math.random()*400);
-    }, 1400);
+      setTimeout(nextWord, 900 + Math.random()*500);
+    }, 1500);
   }
 
   setTimeout(nextWord, 1000);
