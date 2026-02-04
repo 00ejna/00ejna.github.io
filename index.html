@@ -23,7 +23,7 @@ html, body {
   overflow: hidden;
 }
 
-/* POPUP */
+/* ───── POPUP ───── */
 .popup {
   position: absolute;
   top: 45%;
@@ -58,7 +58,7 @@ html, body {
   cursor: default;
 }
 
-/* CONSOLE */
+/* ───── CONSOLE ───── */
 .console {
   display: none;
   position: absolute;
@@ -89,7 +89,7 @@ html, body {
   font-family: inherit;
 }
 
-/* ARCHIVE */
+/* ───── ARCHIVE ───── */
 .archive {
   position: fixed;
   inset: 0;
@@ -105,7 +105,7 @@ html, body {
   opacity: 0.85;
 }
 
-/* WHO */
+/* ───── WHO ───── */
 .whiteout {
   position: fixed;
   inset: 0;
@@ -117,10 +117,21 @@ html, body {
   z-index: 30;
 }
 
-#eyesCanvas {
-  image-rendering: pixelated;
-  filter: contrast(1.15) saturate(1.3);
+/* eyes */
+.eyes-wrapper {
+  display: flex;
+  gap: 40px;
   margin-bottom: 40px;
+}
+
+.eye {
+  width: 160px;
+  image-rendering: pixelated;
+  filter: contrast(1.15) saturate(1.2) brightness(1.05);
+}
+
+.eye.right {
+  transform: scaleX(-1);
 }
 
 .word {
@@ -128,10 +139,10 @@ html, body {
   color: #000;
   letter-spacing: 3px;
   opacity: 0;
-  transition: opacity 0.4s;
+  transition: opacity 0.5s;
 }
 
-/* MOBILE INPUT */
+/* ───── MOBILE INPUT ───── */
 .mobile-input {
   display: none;
   position: fixed;
@@ -154,9 +165,9 @@ html, body {
   <div class="popup-title">system message</div>
   <div class="popup-text">
     An unexpected condition has occurred.<br>
-    The operation could not be completed as requested.<br><br>
-    Some processes may be unstable or unavailable.<br>
-    Further interaction is not recommended.
+    The requested operation could not be completed.<br><br>
+    Some system components may be unstable or unresponsive.<br>
+    Continued interaction is not advised.
   </div>
   <button>OK</button>
 </div>
@@ -173,7 +184,10 @@ html, body {
 </div>
 
 <div class="whiteout" id="whiteout">
-  <canvas id="eyesCanvas" width="420" height="160"></canvas>
+  <div class="eyes-wrapper">
+    <img src="eye.png" class="eye left" alt="">
+    <img src="eye.png" class="eye right" alt="">
+  </div>
   <div class="word" id="word"></div>
 </div>
 
@@ -191,7 +205,7 @@ const mobileInput = document.getElementById("mobileInput");
 let keyBuffer = "";
 let attempts = 0;
 
-/* PC: ACTIVATE CONSOLE WITH OO */
+/* PC → OO */
 document.addEventListener("keydown", e => {
   keyBuffer += e.key.toLowerCase();
   keyBuffer = keyBuffer.slice(-2);
@@ -201,14 +215,14 @@ document.addEventListener("keydown", e => {
   }
 });
 
-/* MOBILE: PINCH TO ENABLE INPUT */
+/* MOBILE → PINCH */
 document.addEventListener("touchmove", e => {
   if (e.touches.length === 2) {
     mobileInput.style.display = "block";
   }
 });
 
-/* MOBILE: TYPE OO */
+/* MOBILE → TYPE OO */
 mobileInput.addEventListener("keydown", e => {
   if (e.key === "Enter" && mobileInput.value.toLowerCase() === "oo") {
     consoleEl.style.display = "block";
@@ -217,7 +231,7 @@ mobileInput.addEventListener("keydown", e => {
   }
 });
 
-/* CONSOLE INPUT */
+/* CONSOLE */
 input.addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
 
@@ -247,53 +261,12 @@ input.addEventListener("keydown", e => {
   output.textContent += "\ninvalid command";
 });
 
-/* ARCHIVE */
+/* ARCHIVE CLOSE */
 archive.onclick = () => archive.style.display = "none";
-
-/* PAINT EYES – MIRROR */
-function drawEyes(){
-  const c = document.getElementById("eyesCanvas");
-  const ctx = c.getContext("2d");
-  ctx.imageSmoothingEnabled = false;
-  ctx.clearRect(0,0,c.width,c.height);
-
-  function eye(cx, cy){
-    ctx.fillStyle = "#f6f6f6";
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 70, 40, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    for(let i=0;i<350;i++){
-      ctx.fillStyle = `rgba(200,200,200,${Math.random()*0.25})`;
-      ctx.fillRect(cx-70+Math.random()*140, cy-40+Math.random()*80, 1,1);
-    }
-
-    ctx.strokeStyle = "#7a0000";
-    ctx.lineWidth = 1;
-    for(let i=0;i<14;i++){
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(
-        cx + (Math.random()-0.5)*120,
-        cy + (Math.random()-0.5)*60
-      );
-      ctx.stroke();
-    }
-
-    ctx.fillStyle = "#000";
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 5, 10, 0, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  eye(150,80);
-  eye(270,80);
-}
 
 /* WHO SEQUENCE */
 function startWho(){
   whiteout.style.display = "flex";
-  drawEyes();
 
   const phrase = ["you", "who", "are", "you"];
   let i = 0;
@@ -310,8 +283,8 @@ function startWho(){
     setTimeout(()=>{
       word.style.opacity = "0";
       i++;
-      setTimeout(nextWord, 900 + Math.random()*500);
-    }, 1500);
+      setTimeout(nextWord, 900 + Math.random()*400);
+    }, 1400);
   }
 
   setTimeout(nextWord, 1000);
