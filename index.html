@@ -21,6 +21,29 @@ html, body {
     );
   font-family: "Courier New", monospace;
   overflow: hidden;
+  .console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  opacity: 0.85;
+}
+
+.console-logo {
+  height: 22px;
+  opacity: 0.6;
+}
+
+.console-icons span {
+  margin-left: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.console-icons span:hover {
+  opacity: 1;
+}
 }
 
 /* ───── POPUP ───── */
@@ -173,6 +196,15 @@ html, body {
 </div>
 
 <div class="console" id="console">
+  <div class="console-header">
+  <img src="redcords.png" class="console-logo" alt="logo">
+
+  <div class="console-icons">
+    <span data-action="members">memberlist</span>
+    <span data-action="help">help</span>
+    <span data-action="contact">contact</span>
+  </div>
+</div>
   <div class="console-output" id="output">
 > system initialized
   </div>
@@ -204,6 +236,12 @@ const mobileInput = document.getElementById("mobileInput");
 
 let keyBuffer = "";
 let attempts = 0;
+document.querySelectorAll(".console-icons span").forEach(icon => {
+  icon.addEventListener("click", () => {
+    output.textContent += "\n> " + icon.dataset.action;
+    output.textContent += "\nservice unavailable";
+  });
+});
 
 /* PC → OO */
 document.addEventListener("keydown", e => {
