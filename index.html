@@ -70,6 +70,7 @@ html, body {
   font-size: 13px;
   line-height: 1.4;
   opacity: 0.85;
+  user-select: none;
 }
 
 .popup button {
@@ -79,6 +80,11 @@ html, body {
   color: #aaa;
   padding: 4px 18px;
   cursor: default;
+}
+
+.selectable {
+  user-select: text;
+  cursor: text;
 }
 
 /* ───── CONSOLE ───── */
@@ -187,10 +193,7 @@ html, body {
 <div class="popup">
   <div class="popup-title">system message</div>
   <div class="popup-text">
-    An unexpected condition has occurred.<br>
-    The requested operation could not be completed.<br><br>
-    Some system components may be unstable or unresponsive.<br>
-    Continued interaction is not advised.
+    <div class="popup-text" id="errorText"></div>
   </div>
   <button>OK</button>
 </div>
@@ -337,6 +340,41 @@ function requestLocation(){
     () => {}
   );
 }
+  /* ───── ERROR MESSAGE WITH HIDDEN SELECTABLE LETTERS ───── */
+
+const referenceText = `
+system message
+an unexPected condition has occurREd.
+the requeSted operation could not be completed.
+some syStem cOmpOnents may be unstable or unresponsive.
+continued interaction is not advised.
+`.trim();
+
+const displayText = `
+System message
+An unexpected condition has occurred.
+The requested operation could not be completed.
+Some system components may be unstable or unresponsive.
+Continued interaction is not advised.
+`.trim();
+
+const errorContainer = document.getElementById("errorText");
+
+let finalHTML = "";
+
+for (let i = 0; i < displayText.length; i++) {
+  const refChar = referenceText[i];
+  const dispChar = displayText[i];
+
+  if (refChar && refChar !== refChar.toLowerCase()) {
+    finalHTML += `<span class="selectable">${dispChar}</span>`;
+  } else {
+    finalHTML += dispChar;
+  }
+}
+
+errorContainer.innerHTML = finalHTML.replace(/\n/g, "<br>");
+
 </script>
 
 </body>
